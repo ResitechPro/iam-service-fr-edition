@@ -6,8 +6,8 @@ CREATE TABLE IF NOT EXISTS "permissions" (
 );
 --> statement-breakpoint
 CREATE TABLE IF NOT EXISTS "role_permissions" (
-	"role_id" integer NOT NULL,
-	"permission_id" integer NOT NULL
+	"role_id" uuid NOT NULL,
+	"permission_id" uuid NOT NULL
 );
 --> statement-breakpoint
 CREATE TABLE IF NOT EXISTS "roles" (
@@ -20,7 +20,7 @@ CREATE TABLE IF NOT EXISTS "users" (
 	"id" uuid PRIMARY KEY DEFAULT gen_random_uuid() NOT NULL,
 	"username" varchar NOT NULL,
 	"password" varchar NOT NULL,
-	"role_id" integer NOT NULL,
+	"role_id" uuid NOT NULL,
 	CONSTRAINT "users_username_unique" UNIQUE("username")
 );
 --> statement-breakpoint

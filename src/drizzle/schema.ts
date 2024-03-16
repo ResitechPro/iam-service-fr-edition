@@ -1,10 +1,10 @@
-import { integer, pgTable, uuid, varchar } from 'drizzle-orm/pg-core';
+import { pgTable, uuid, varchar } from 'drizzle-orm/pg-core';
 
 export const users = pgTable('users', {
   id: uuid('id').primaryKey().defaultRandom().notNull(),
   username: varchar('username').notNull().unique(),
   password: varchar('password').notNull(),
-  roleId: integer('role_id')
+  roleId: uuid('role_id')
     .notNull()
     .references(() => roles.id, { onDelete: 'cascade' }),
 });
@@ -21,10 +21,10 @@ export const permissions = pgTable('permissions', {
 });
 
 export const rolePermissions = pgTable('role_permissions', {
-  roleId: integer('role_id')
+  roleId: uuid('role_id')
     .notNull()
     .references(() => roles.id, { onDelete: 'cascade' }),
-  permissionId: integer('permission_id')
+  permissionId: uuid('permission_id')
     .notNull()
     .references(() => permissions.id, { onDelete: 'cascade' }),
 });

@@ -1,5 +1,5 @@
 {
-  "id": "4b9c8a17-292b-4716-a7f8-ec23ba04b75f",
+  "id": "a3d83335-dad3-4930-ae96-be8d51a0f2bd",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "version": "5",
   "dialect": "pg",
@@ -47,13 +47,13 @@
       "columns": {
         "role_id": {
           "name": "role_id",
-          "type": "integer",
+          "type": "uuid",
           "primaryKey": false,
           "notNull": true
         },
         "permission_id": {
           "name": "permission_id",
-          "type": "integer",
+          "type": "uuid",
           "primaryKey": false,
           "notNull": true
         }
@@ -146,7 +146,7 @@
         },
         "role_id": {
           "name": "role_id",
-          "type": "integer",
+          "type": "uuid",
           "primaryKey": false,
           "notNull": true
         }

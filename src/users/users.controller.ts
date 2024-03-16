@@ -6,20 +6,14 @@ import {
   Patch,
   Param,
   Delete,
-  Inject,
 } from '@nestjs/common';
 import { UsersService } from './users.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
-import { PostgresJsDatabase } from 'drizzle-orm/postgres-js';
-import * as schemas from '../drizzle/schema';
 
 @Controller('users')
 export class UsersController {
-  constructor(
-    private readonly usersService: UsersService,
-    @Inject('DB_DEV') private drizzleDev: PostgresJsDatabase<typeof schemas>,
-  ) {}
+  constructor(private readonly usersService: UsersService) {}
 
   @Post()
   create(@Body() createUserDto: CreateUserDto) {
@@ -27,14 +21,7 @@ export class UsersController {
   }
 
   @Get()
-  async findAll() {
-    try {
-      const users = await this.drizzleDev.query.roles.findMany();
-      console.log(users);
-    } catch (error) {
-      console.log(error);
-    }
-
+  findAll() {
     return this.usersService.findAll();
   }
 
