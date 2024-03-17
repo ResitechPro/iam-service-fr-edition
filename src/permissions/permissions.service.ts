@@ -1,26 +1,42 @@
-import { Injectable } from '@nestjs/common';
-import { CreatePermissionDto } from './dto/create-permission.dto';
-import { UpdatePermissionDto } from './dto/update-permission.dto';
+import { Inject, Injectable } from '@nestjs/common';
+import { DrizzleAsyncProvider } from 'src/drizzle/drizzle.provider';
+import { NodePgDatabase } from 'drizzle-orm/node-postgres';
+import * as schema from '../drizzle/schema';
+import { InferInsertModel, eq } from 'drizzle-orm';
 
 @Injectable()
 export class PermissionsService {
-  create(createPermissionDto: CreatePermissionDto) {
-    return 'This action adds a new permission';
+  constructor(
+    @Inject(DrizzleAsyncProvider) private db: NodePgDatabase<typeof schema>,
+  ) {}
+
+  async create(createPermissionDto: InferInsertModel<typeof schema.permissions>) {
+    return await this.db.insert(schema.permissions).values(createPermissionDto).returning();
   }
 
-  findAll() {
-    return `This action returns all permissions`;
+  async findAll() {
+    return await this.db.select().from(schema.permissions);
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} permission`;
+  async findOne(id: string) {
+    return await this.db
+      .select()
+      .from(schema.permissions)
+      .where(eq(schema.permissions.id, id));
   }
 
-  update(id: number, updatePermissionDto: UpdatePermissionDto) {
-    return `This action updates a #${id} permission`;
+  async update(id: string, updatePermissionDto: Partial<InferInsertModel<typeof schema.permissions>>) {
+    return await this.db
+      .update(schema.permissions)
+      .set(updatePermissionDto)
+      .where(eq(schema.permissions.id, id))
+      .returning();
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} permission`;
+  async remove(id: string) {
+    return await this.db
+      .delete(schema.permissions)
+      .where(eq(schema.permissions.id, id))
+      .returning();
   }
 }
