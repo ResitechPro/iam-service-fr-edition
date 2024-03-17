@@ -1,10 +1,8 @@
 import { Inject, Injectable } from '@nestjs/common';
-import { CreateRoleDto } from './dto/create-role.dto';
-import { UpdateRoleDto } from './dto/update-role.dto';
 import { DrizzleAsyncProvider } from 'src/drizzle/drizzle.provider';
 import { NodePgDatabase } from 'drizzle-orm/node-postgres';
 import * as schema from '../drizzle/schema';
-import { InferInsertModel } from 'drizzle-orm';
+import { InferInsertModel, eq } from 'drizzle-orm';
 
 @Injectable()
 export class RolesService {
@@ -16,19 +14,29 @@ export class RolesService {
     return await this.db.insert(schema.roles).values(createRoleDto).returning();
   }
 
-  findAll() {
-    return `This action returns all roles`;
+  async findAll() {
+    return await this.db.select().from(schema.roles);
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} role`;
+  async findOne(id: string) {
+    return await this.db
+      .select()
+      .from(schema.roles)
+      .where(eq(schema.roles.id, id));
   }
 
-  update(id: number, updateRoleDto: UpdateRoleDto) {
-    return `This action updates a #${id} role`;
+  async update(id: string, updateRoleDto: Partial<InferInsertModel<typeof schema.roles>>) {
+    return await this.db
+      .update(schema.roles)
+      .set(updateRoleDto)
+      .where(eq(schema.roles.id, id))
+      .returning();
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} role`;
+  async remove(id: string) {
+    return await this.db
+      .delete(schema.roles)
+      .where(eq(schema.roles.id, id))
+      .returning();
   }
 }

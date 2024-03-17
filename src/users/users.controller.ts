@@ -8,8 +8,6 @@ import {
   Delete,
 } from '@nestjs/common';
 import { UsersService } from './users.service';
-import { CreateUserDto } from './dto/create-user.dto';
-import { UpdateUserDto } from './dto/update-user.dto';
 import { users } from 'src/drizzle/schema';
 import { InferInsertModel } from 'drizzle-orm';
 
@@ -33,7 +31,10 @@ export class UsersController {
   }
 
   @Patch(':id')
-  update(@Param('id') id: string, @Body() updateUserDto: UpdateUserDto) {
+  update(
+    @Param('id') id: string,
+    @Body() updateUserDto: Partial<InferInsertModel<typeof users>>,
+  ) {
     return this.usersService.update(id, updateUserDto);
   }
 

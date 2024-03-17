@@ -1,9 +1,8 @@
 import { Inject, Injectable } from '@nestjs/common';
-import { UpdateUserDto } from './dto/update-user.dto';
 import { DrizzleAsyncProvider } from 'src/drizzle/drizzle.provider';
-import * as schema from '../drizzle/schema';
 import { InferInsertModel, eq } from 'drizzle-orm';
 import { NodePgDatabase } from 'drizzle-orm/node-postgres';
+import * as schema from '../drizzle/schema';
 
 @Injectable()
 export class UsersService {
@@ -29,7 +28,7 @@ export class UsersService {
   async update(
     id: string,
     updateUserDto: Partial<InferInsertModel<typeof schema.users>>,
-  ) {    
+  ) {
     return await this.db
       .update(schema.users)
       .set(updateUserDto)
