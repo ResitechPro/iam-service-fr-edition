@@ -10,13 +10,15 @@ import {
 import { RolesService } from './roles.service';
 import { CreateRoleDto } from './dto/create-role.dto';
 import { UpdateRoleDto } from './dto/update-role.dto';
+import { InferInsertModel } from 'drizzle-orm';
+import { roles } from 'src/drizzle/schema';
 
 @Controller('roles')
 export class RolesController {
   constructor(private readonly rolesService: RolesService) {}
 
   @Post()
-  create(@Body() createRoleDto: CreateRoleDto) {
+  create(@Body() createRoleDto: InferInsertModel<typeof roles>) {
     return this.rolesService.create(createRoleDto);
   }
 

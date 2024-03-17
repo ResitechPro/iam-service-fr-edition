@@ -1,33 +1,46 @@
 import { Inject, Injectable } from '@nestjs/common';
-import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { DrizzleAsyncProvider } from 'src/drizzle/drizzle.provider';
-import { NeonHttpDatabase } from 'drizzle-orm/neon-http';
 import * as schema from '../drizzle/schema';
+import { InferInsertModel, eq } from 'drizzle-orm';
+import { NodePgDatabase } from 'drizzle-orm/node-postgres';
 
 @Injectable()
 export class UsersService {
   constructor(
-    @Inject(DrizzleAsyncProvider) private db: NeonHttpDatabase<typeof schema>,
+    @Inject(DrizzleAsyncProvider) private db: NodePgDatabase<typeof schema>,
   ) {}
 
-  create(createUserDto: CreateUserDto) {
-    return 'This action adds a new user';
+  async create(createUserDto: InferInsertModel<typeof schema.users>) {
+    return await this.db.insert(schema.users).values(createUserDto).returning();
   }
 
   async findAll() {
     return await this.db.select().from(schema.users);
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} user`;
+  async findOne(id: string) {
+    return await this.db
+      .select()
+      .from(schema.users)
+      .where(eq(schema.users.id, id));
   }
 
-  update(id: number, updateUserDto: UpdateUserDto) {
-    return `This action updates a #${id} user`;
+  async update(
+    id: string,
+    updateUserDto: Partial<InferInsertModel<typeof schema.users>>,
+  ) {    
+    return await this.db
+      .update(schema.users)
+      .set(updateUserDto)
+      .where(eq(schema.users.id, id))
+      .returning();
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} user`;
+  async remove(id: string) {
+    return await this.db
+      .delete(schema.users)
+      .where(eq(schema.users.id, id))
+      .returning();
   }
 }

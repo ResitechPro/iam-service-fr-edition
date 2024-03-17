@@ -1,11 +1,19 @@
-import { Injectable } from '@nestjs/common';
+import { Inject, Injectable } from '@nestjs/common';
 import { CreateRoleDto } from './dto/create-role.dto';
 import { UpdateRoleDto } from './dto/update-role.dto';
+import { DrizzleAsyncProvider } from 'src/drizzle/drizzle.provider';
+import { NodePgDatabase } from 'drizzle-orm/node-postgres';
+import * as schema from '../drizzle/schema';
+import { InferInsertModel } from 'drizzle-orm';
 
 @Injectable()
 export class RolesService {
-  create(createRoleDto: CreateRoleDto) {
-    return 'This action adds a new role';
+  constructor(
+    @Inject(DrizzleAsyncProvider) private db: NodePgDatabase<typeof schema>,
+  ) {}
+
+  async create(createRoleDto: InferInsertModel<typeof schema.roles>) {
+    return await this.db.insert(schema.roles).values(createRoleDto).returning();
   }
 
   findAll() {
