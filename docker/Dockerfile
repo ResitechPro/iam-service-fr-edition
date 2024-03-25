@@ -9,7 +9,7 @@ RUN npm install -g pnpm && \
     npm install -g @nestjs/cli && \
     pnpm install
 
-COPY .env nest-cli.json tsconfig.build.json tsconfig.json ./
+COPY nest-cli.json tsconfig.build.json tsconfig.json ./
 COPY migrations ./migrations
 COPY src ./src
 
