@@ -1,12 +1,4 @@
-import {
-  Controller,
-  Get,
-  Post,
-  Body,
-  Patch,
-  Param,
-  Delete,
-} from '@nestjs/common';
+import { Controller } from '@nestjs/common';
 import { PermissionsService } from './permissions.service';
 import { permissions } from 'src/drizzle/schema';
 import { InferInsertModel } from 'drizzle-orm';
@@ -17,7 +9,7 @@ export class PermissionsController {
   constructor(private readonly permissionsService: PermissionsService) {}
 
   @MessagePattern({ cmd: 'create_permission' })
-  create(@Body() createPermissionDto: InferInsertModel<typeof permissions>) {
+  create(createPermissionDto: InferInsertModel<typeof permissions>) {
     return this.permissionsService.create(createPermissionDto);
   }
 
