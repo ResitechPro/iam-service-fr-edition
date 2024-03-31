@@ -1,5 +1,5 @@
 import { Inject, Injectable } from '@nestjs/common';
-import { DrizzleAsyncProvider } from 'src/drizzle/drizzle.provider';
+import { DrizzleAsyncProvider } from '../drizzle/drizzle.provider';
 import { NodePgDatabase } from 'drizzle-orm/node-postgres';
 import * as schema from '../drizzle/schema';
 import { InferInsertModel, eq } from 'drizzle-orm';
@@ -10,8 +10,13 @@ export class PermissionsService {
     @Inject(DrizzleAsyncProvider) private db: NodePgDatabase<typeof schema>,
   ) {}
 
-  async create(createPermissionDto: InferInsertModel<typeof schema.permissions>) {
-    return await this.db.insert(schema.permissions).values(createPermissionDto).returning();
+  async create(
+    createPermissionDto: InferInsertModel<typeof schema.permissions>,
+  ) {
+    return await this.db
+      .insert(schema.permissions)
+      .values(createPermissionDto)
+      .returning();
   }
 
   async findAll() {
@@ -25,7 +30,10 @@ export class PermissionsService {
       .where(eq(schema.permissions.id, id));
   }
 
-  async update(id: string, updatePermissionDto: Partial<InferInsertModel<typeof schema.permissions>>) {
+  async update(
+    id: string,
+    updatePermissionDto: Partial<InferInsertModel<typeof schema.permissions>>,
+  ) {
     return await this.db
       .update(schema.permissions)
       .set(updatePermissionDto)

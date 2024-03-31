@@ -1,5 +1,5 @@
 import { Inject, Injectable } from '@nestjs/common';
-import { DrizzleAsyncProvider } from 'src/drizzle/drizzle.provider';
+import { DrizzleAsyncProvider } from '../drizzle/drizzle.provider';
 import { InferInsertModel, eq } from 'drizzle-orm';
 import { NodePgDatabase } from 'drizzle-orm/node-postgres';
 import * as schema from '../drizzle/schema';
