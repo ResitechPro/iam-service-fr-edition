@@ -10,33 +10,34 @@ import {
 import { RolesService } from './roles.service';
 import { InferInsertModel } from 'drizzle-orm';
 import { roles } from 'src/drizzle/schema';
+import { MessagePattern } from '@nestjs/microservices';
 
 @Controller('roles')
 export class RolesController {
   constructor(private readonly rolesService: RolesService) {}
 
-  @Post()
-  create(@Body() createRoleDto: InferInsertModel<typeof roles>) {
+  @MessagePattern({ cmd: 'create_role' })
+  create(createRoleDto: InferInsertModel<typeof roles>) {
     return this.rolesService.create(createRoleDto);
   }
 
-  @Get()
+  @MessagePattern({ cmd: 'get_roles' })
   findAll() {
     return this.rolesService.findAll();
   }
 
-  @Get(':id')
-  findOne(@Param('id') id: string) {
+  @MessagePattern({ cmd: 'get_role' })
+  findOne(id: string) {
     return this.rolesService.findOne(id);
   }
 
-  @Patch(':id')
-  update(@Param('id') id: string, @Body() updateRoleDto: Partial<InferInsertModel<typeof roles>>) {
-    return this.rolesService.update(id, updateRoleDto);
+  @MessagePattern({ cmd: 'update_role' })
+  update({ id, ...rest }: Partial<InferInsertModel<typeof roles>>) {
+    return this.rolesService.update(id, rest);
   }
 
-  @Delete(':id')
-  remove(@Param('id') id: string) {
+  @MessagePattern({ cmd: 'delete_role' })
+  remove(id: string) {
     return this.rolesService.remove(id);
   }
 }

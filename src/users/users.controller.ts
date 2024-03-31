@@ -9,27 +9,27 @@ export class UsersController {
   constructor(private readonly usersService: UsersService) {}
 
   @MessagePattern({ cmd: 'create_user' })
-  createMS(createUserDto: InferInsertModel<typeof users>) {
+  create(createUserDto: InferInsertModel<typeof users>) {
     return this.usersService.create(createUserDto);
   }
 
   @MessagePattern({ cmd: 'get_users' })
-  findAllMS() {
+  findAll() {
     return this.usersService.findAll();
   }
 
   @MessagePattern({ cmd: 'get_user' })
-  findOneMS(id: string) {
+  findOne(id: string) {
     return this.usersService.findOne(id);
   }
 
   @MessagePattern({ cmd: 'update_user' })
-  updateMS({ id, ...rest }: Partial<InferInsertModel<typeof users>>) {
+  update({ id, ...rest }: Partial<InferInsertModel<typeof users>>) {
     return this.usersService.update(id, rest);
   }
 
   @MessagePattern({ cmd: 'delete_user' })
-  removeMS(id: string) {
+  remove(id: string) {
     return this.usersService.remove(id);
   }
 }
