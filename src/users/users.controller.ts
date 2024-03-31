@@ -1,51 +1,15 @@
-import {
-  Controller,
-  Get,
-  Post,
-  Body,
-  Patch,
-  Param,
-  Delete,
-} from '@nestjs/common';
+import { Controller } from '@nestjs/common';
 import { UsersService } from './users.service';
 import { users } from 'src/drizzle/schema';
 import { InferInsertModel } from 'drizzle-orm';
-import { EventPattern, MessagePattern } from '@nestjs/microservices';
+import { MessagePattern } from '@nestjs/microservices';
 
 @Controller('users')
 export class UsersController {
   constructor(private readonly usersService: UsersService) {}
 
-  @Post()
-  create(@Body() createUserDto: InferInsertModel<typeof users>) {
-    return this.usersService.create(createUserDto);
-  }
-
-  @Get()
-  findAll() {
-    return this.usersService.findAll();
-  }
-
-  @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.usersService.findOne(id);
-  }
-
-  @Patch(':id')
-  update(
-    @Param('id') id: string,
-    @Body() updateUserDto: Partial<InferInsertModel<typeof users>>,
-  ) {
-    return this.usersService.update(id, updateUserDto);
-  }
-
-  @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.usersService.remove(id);
-  }
-
-  @EventPattern('create_user')
-  createMS(@Body() createUserDto: InferInsertModel<typeof users>) {
+  @MessagePattern({ cmd: 'create_user' })
+  createMS(createUserDto: InferInsertModel<typeof users>) {
     return this.usersService.create(createUserDto);
   }
 
@@ -55,20 +19,17 @@ export class UsersController {
   }
 
   @MessagePattern({ cmd: 'get_user' })
-  findOneMS(@Param('id') id: string) {
+  findOneMS(id: string) {
     return this.usersService.findOne(id);
   }
 
-  @EventPattern('update_user')
-  updateMS(
-    @Param('id') id: string,
-    @Body() updateUserDto: Partial<InferInsertModel<typeof users>>,
-  ) {
-    return this.usersService.update(id, updateUserDto);
+  @MessagePattern({ cmd: 'update_user' })
+  updateMS({ id, ...rest }: Partial<InferInsertModel<typeof users>>) {
+    return this.usersService.update(id, rest);
   }
 
-  @EventPattern('delete_user')
-  removeMS(@Param('id') id: string) {
+  @MessagePattern({ cmd: 'delete_user' })
+  removeMS(id: string) {
     return this.usersService.remove(id);
   }
 }
