@@ -11,18 +11,40 @@ export class UsersService {
   ) {}
 
   async create(createUserDto: InferInsertModel<typeof schema.users>) {
-    return await this.db.insert(schema.users).values(createUserDto).returning();
+    return await this.db.insert(schema.users).values(createUserDto).returning({
+      id: schema.users.id,
+      username: schema.users.username,
+      role: schema.users.roleId,
+    });
   }
 
   async findAll() {
-    return await this.db.select().from(schema.users);
+    return await this.db
+      .select({
+        id: schema.users.id,
+        username: schema.users.username,
+        role: {
+          id: schema.roles.id,
+          name: schema.roles.name,
+        },
+      })
+      .from(schema.users)
+      .leftJoin(schema.roles, eq(schema.users.roleId, schema.roles.id));
   }
 
   async findOne(id: string) {
     return await this.db
-      .select()
+      .select({
+        id: schema.users.id,
+        username: schema.users.username,
+        role: {
+          id: schema.roles.id,
+          name: schema.roles.name,
+        },
+      })
       .from(schema.users)
-      .where(eq(schema.users.id, id));
+      .where(eq(schema.users.id, id))
+      .leftJoin(schema.roles, eq(schema.users.roleId, schema.roles.id));
   }
 
   async update(
@@ -33,13 +55,21 @@ export class UsersService {
       .update(schema.users)
       .set(updateUserDto)
       .where(eq(schema.users.id, id))
-      .returning();
+      .returning({
+        id: schema.users.id,
+        username: schema.users.username,
+        role: schema.users.roleId,
+      });
   }
 
   async remove(id: string) {
     return await this.db
       .delete(schema.users)
       .where(eq(schema.users.id, id))
-      .returning();
+      .returning({
+        id: schema.users.id,
+        username: schema.users.username,
+        role: schema.users.roleId,
+      });
   }
 }
