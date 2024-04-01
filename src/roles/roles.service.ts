@@ -15,7 +15,21 @@ export class RolesService {
   }
 
   async findAll() {
-    return await this.db.select().from(schema.roles);
+    return await this.db
+      .select({
+        id: schema.roles.id,
+        name: schema.roles.name,
+        permissions: schema.permissions,
+      })
+      .from(schema.roles)
+      .leftJoin(
+        schema.rolePermissions,
+        eq(schema.roles.id, schema.rolePermissions.roleId),
+      )
+      .leftJoin(
+        schema.permissions,
+        eq(schema.rolePermissions.permissionId, schema.permissions.id),
+      );
   }
 
   async findOne(id: string) {

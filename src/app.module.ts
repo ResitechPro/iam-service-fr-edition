@@ -6,6 +6,7 @@ import { UsersModule } from './users/users.module';
 import { RolesModule } from './roles/roles.module';
 import { PermissionsModule } from './permissions/permissions.module';
 import { DrizzleModule } from './drizzle/drizzle.module';
+import { PermissionToRoleModule } from './permission-to-role/permission-to-role.module';
 
 @Module({
   imports: [
@@ -16,6 +17,7 @@ import { DrizzleModule } from './drizzle/drizzle.module';
     RolesModule,
     PermissionsModule,
     DrizzleModule,
+    PermissionToRoleModule,
   ],
   controllers: [AppController],
   providers: [AppService],
