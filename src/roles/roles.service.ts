@@ -15,7 +15,7 @@ export class RolesService {
   }
 
   async findAll() {
-    return await this.db
+    const roles = await this.db
       .select({
         id: schema.roles.id,
         name: schema.roles.name,
@@ -30,13 +30,73 @@ export class RolesService {
         schema.permissions,
         eq(schema.rolePermissions.permissionId, schema.permissions.id),
       );
+
+    const rolesWithPermissions = roles.reduce((acc, role) => {
+      const existingRole = acc.find((r) => r.id === role.id);
+      const permission = role.permissions?.id
+        ? {
+            id: role.permissions.id,
+            resource: role.permissions.resource,
+            action: role.permissions.action,
+          }
+        : undefined;
+
+      if (existingRole) {
+        existingRole.permissions.push(permission);
+      } else {
+        acc.push({
+          id: role.id,
+          name: role.name,
+          permissions: permission ? [permission] : [],
+        });
+      }
+
+      return acc;
+    }, []);
+
+    return rolesWithPermissions;
   }
 
   async findOne(id: string) {
-    return await this.db
-      .select()
+    const roles = await this.db
+      .select({
+        id: schema.roles.id,
+        name: schema.roles.name,
+        permissions: schema.permissions,
+      })
       .from(schema.roles)
-      .where(eq(schema.roles.id, id));
+      .where(eq(schema.roles.id, id))
+      .leftJoin(
+        schema.rolePermissions,
+        eq(schema.roles.id, schema.rolePermissions.roleId),
+      )
+      .leftJoin(
+        schema.permissions,
+        eq(schema.rolePermissions.permissionId, schema.permissions.id),
+      );
+
+    const rolesWithPermissions = roles.reduce((acc, role) => {
+      const existingRole = acc.find((r) => r.id === role.id);
+      const permission = {
+        id: role.permissions.id,
+        resource: role.permissions.resource,
+        action: role.permissions.action,
+      };
+
+      if (existingRole) {
+        existingRole.permissions.push(permission);
+      } else {
+        acc.push({
+          id: role.id,
+          name: role.name,
+          permissions: [permission],
+        });
+      }
+
+      return acc;
+    }, []);
+
+    return rolesWithPermissions[0];
   }
 
   async update(
